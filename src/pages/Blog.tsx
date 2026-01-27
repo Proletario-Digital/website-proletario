@@ -1,67 +1,77 @@
+import { useState } from "react";
 import { Helmet } from "react-helmet-async";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
-import { Calendar, User, ArrowRight } from "lucide-react";
-
-const posts = [
-  {
-    title: "5 Dicas para Melhorar a Presença Digital da Sua Empresa",
-    excerpt: "Descubra estratégias práticas para destacar seu negócio no ambiente online e atrair mais clientes.",
-    image: "https://images.unsplash.com/photo-1432888622747-4eb9a8efeb07?w=800&h=500&fit=crop",
-    category: "Marketing Digital",
-    author: "Equipa PD",
-    date: "05 Dez 2025",
-    slug: "dicas-presenca-digital",
-  },
-  {
-    title: "Por Que Sua Empresa Precisa de um Site Profissional",
-    excerpt: "Entenda a importância de ter uma presença online sólida e como isso impacta seus resultados.",
-    image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&h=500&fit=crop",
-    category: "Desenvolvimento Web",
-    author: "Equipa PD",
-    date: "28 Nov 2025",
-    slug: "empresa-site-profissional",
-  },
-  {
-    title: "SEO: O Guia Completo para Iniciantes",
-    excerpt: "Aprenda os fundamentos de SEO e como otimizar seu site para aparecer nas primeiras posições do Google.",
-    image: "https://images.unsplash.com/photo-1504868584819-f8e8b4b6d7e3?w=800&h=500&fit=crop",
-    category: "SEO",
-    author: "Equipa PD",
-    date: "20 Nov 2025",
-    slug: "guia-seo-iniciantes",
-  },
-  {
-    title: "E-commerce em Angola: Tendências para 2025",
-    excerpt: "Conheça as principais tendências do comércio eletrônico que vão dominar o mercado angolano.",
-    image: "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=800&h=500&fit=crop",
-    category: "E-commerce",
-    author: "Equipa PD",
-    date: "15 Nov 2025",
-    slug: "ecommerce-angola-tendencias",
-  },
-  {
-    title: "Como Escolher o Template Ideal para Seu Site",
-    excerpt: "Dicas para selecionar o modelo de site perfeito que represente sua marca e atenda suas necessidades.",
-    image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800&h=500&fit=crop",
-    category: "Design",
-    author: "Equipa PD",
-    date: "10 Nov 2025",
-    slug: "escolher-template-site",
-  },
-  {
-    title: "A Importância dos E-mails Corporativos",
-    excerpt: "Saiba por que ter um e-mail profissional com o domínio da sua empresa transmite mais credibilidade.",
-    image: "https://images.unsplash.com/photo-1596526131083-e8c633c948d2?w=800&h=500&fit=crop",
-    category: "Produtividade",
-    author: "Equipa PD",
-    date: "05 Nov 2025",
-    slug: "emails-corporativos-importancia",
-  },
-];
+import { Calendar, User, ArrowRight, Search, X } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Badge } from "@/components/ui/badge";
+import { usePosts, useCategories } from "@/hooks/usePosts";
+import {
+  formatDate,
+  getPostFeaturedImage,
+  getPostAuthorName,
+  getPostCategories,
+  stripHtmlTags,
+} from "@/services/wordpress-api";
 
 const Blog = () => {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchInput, setSearchInput] = useState(searchParams.get("search") || "");
+  
+  const currentPage = parseInt(searchParams.get("page") || "1", 10);
+  const searchQuery = searchParams.get("search") || "";
+  const categoryFilter = searchParams.get("category") ? parseInt(searchParams.get("category")!, 10) : undefined;
+
+  const { data: postsData, isLoading: postsLoading, error: postsError } = usePosts({
+    page: currentPage,
+    perPage: 9,
+    search: searchQuery || undefined,
+    categories: categoryFilter ? [categoryFilter] : undefined,
+  });
+
+  const { data: categories } = useCategories();
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    const newParams = new URLSearchParams(searchParams);
+    if (searchInput.trim()) {
+      newParams.set("search", searchInput.trim());
+    } else {
+      newParams.delete("search");
+    }
+    newParams.set("page", "1");
+    setSearchParams(newParams);
+  };
+
+  const clearSearch = () => {
+    setSearchInput("");
+    const newParams = new URLSearchParams(searchParams);
+    newParams.delete("search");
+    newParams.set("page", "1");
+    setSearchParams(newParams);
+  };
+
+  const handleCategoryClick = (categoryId: number | null) => {
+    const newParams = new URLSearchParams(searchParams);
+    if (categoryId) {
+      newParams.set("category", categoryId.toString());
+    } else {
+      newParams.delete("category");
+    }
+    newParams.set("page", "1");
+    setSearchParams(newParams);
+  };
+
+  const handlePageChange = (page: number) => {
+    const newParams = new URLSearchParams(searchParams);
+    newParams.set("page", page.toString());
+    setSearchParams(newParams);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
   return (
     <>
       <Helmet>
@@ -84,68 +94,251 @@ const Blog = () => {
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-primary-foreground mb-6">
                 Dicas e <span className="text-accent">Insights</span>
               </h1>
-              <p className="text-lg md:text-xl text-primary-foreground/80 leading-relaxed">
+              <p className="text-lg md:text-xl text-primary-foreground/80 leading-relaxed mb-8">
                 Conteúdo relevante sobre marketing digital, desenvolvimento web e tendências do mercado.
               </p>
+
+              {/* Search Bar */}
+              <form onSubmit={handleSearch} className="max-w-xl mx-auto">
+                <div className="relative flex gap-2">
+                  <div className="relative flex-1">
+                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" size={20} />
+                    <Input
+                      type="text"
+                      placeholder="Pesquisar artigos..."
+                      value={searchInput}
+                      onChange={(e) => setSearchInput(e.target.value)}
+                      className="pl-12 pr-10 h-12 bg-background/95 border-0 text-foreground placeholder:text-muted-foreground"
+                    />
+                    {searchInput && (
+                      <button
+                        type="button"
+                        onClick={clearSearch}
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                      >
+                        <X size={18} />
+                      </button>
+                    )}
+                  </div>
+                  <Button type="submit" variant="accent" className="h-12 px-6">
+                    Pesquisar
+                  </Button>
+                </div>
+              </form>
             </div>
           </div>
         </section>
 
+        {/* Categories */}
+        {categories && categories.length > 0 && (
+          <section className="py-6 bg-muted/50 border-b">
+            <div className="container-custom">
+              <div className="flex flex-wrap items-center justify-center gap-2">
+                <Button
+                  variant={!categoryFilter ? "accent" : "outline"}
+                  size="sm"
+                  onClick={() => handleCategoryClick(null)}
+                  className="rounded-full"
+                >
+                  Todas
+                </Button>
+                {categories.filter(cat => cat.count > 0).map((category) => (
+                  <Button
+                    key={category.id}
+                    variant={categoryFilter === category.id ? "accent" : "outline"}
+                    size="sm"
+                    onClick={() => handleCategoryClick(category.id)}
+                    className="rounded-full"
+                  >
+                    {category.name} ({category.count})
+                  </Button>
+                ))}
+              </div>
+            </div>
+          </section>
+        )}
+
+        {/* Search Results Info */}
+        {(searchQuery || categoryFilter) && (
+          <section className="py-4 bg-background border-b">
+            <div className="container-custom">
+              <div className="flex items-center justify-between">
+                <p className="text-muted-foreground">
+                  {postsData?.totalPosts || 0} resultado(s) encontrado(s)
+                  {searchQuery && <> para "<strong className="text-foreground">{searchQuery}</strong>"</>}
+                </p>
+                <Button variant="ghost" size="sm" onClick={() => {
+                  clearSearch();
+                  handleCategoryClick(null);
+                }}>
+                  Limpar filtros
+                </Button>
+              </div>
+            </div>
+          </section>
+        )}
+
         {/* Blog Grid */}
         <section className="section-padding bg-background">
           <div className="container-custom">
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {posts.map((post, index) => (
-                <article
-                  key={index}
-                  className="group bg-card rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300"
-                >
-                  <Link to={`/blog/${post.slug}`}>
-                    <div className="relative h-48 overflow-hidden">
-                      <img
-                        src={post.image}
-                        alt={post.title}
-                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                      />
-                      <span className="absolute top-4 left-4 px-3 py-1 bg-accent text-accent-foreground text-xs font-bold rounded-full">
-                        {post.category}
-                      </span>
+            {postsLoading ? (
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {Array.from({ length: 6 }).map((_, index) => (
+                  <div key={index} className="bg-card rounded-2xl overflow-hidden shadow-sm">
+                    <Skeleton className="h-48 w-full" />
+                    <div className="p-6">
+                      <div className="flex gap-4 mb-3">
+                        <Skeleton className="h-4 w-24" />
+                        <Skeleton className="h-4 w-24" />
+                      </div>
+                      <Skeleton className="h-6 w-full mb-2" />
+                      <Skeleton className="h-6 w-3/4 mb-3" />
+                      <Skeleton className="h-4 w-full mb-2" />
+                      <Skeleton className="h-4 w-2/3 mb-4" />
+                      <Skeleton className="h-4 w-20" />
                     </div>
-                  </Link>
-
-                  <div className="p-6">
-                    <div className="flex items-center gap-4 text-sm text-muted-foreground mb-3">
-                      <span className="flex items-center gap-1">
-                        <User size={14} />
-                        {post.author}
-                      </span>
-                      <span className="flex items-center gap-1">
-                        <Calendar size={14} />
-                        {post.date}
-                      </span>
-                    </div>
-
-                    <Link to={`/blog/${post.slug}`}>
-                      <h2 className="text-xl font-bold text-foreground mb-3 group-hover:text-accent transition-colors duration-200 line-clamp-2">
-                        {post.title}
-                      </h2>
-                    </Link>
-
-                    <p className="text-muted-foreground text-sm mb-4 line-clamp-2">
-                      {post.excerpt}
-                    </p>
-
-                    <Link
-                      to={`/blog/${post.slug}`}
-                      className="inline-flex items-center gap-2 text-accent font-semibold text-sm group-hover:gap-3 transition-all duration-200"
-                    >
-                      Ler mais
-                      <ArrowRight size={16} />
-                    </Link>
                   </div>
-                </article>
-              ))}
-            </div>
+                ))}
+              </div>
+            ) : postsError ? (
+              <div className="text-center py-12">
+                <p className="text-destructive text-lg mb-4">Erro ao carregar os artigos.</p>
+                <Button onClick={() => window.location.reload()} variant="outline">
+                  Tentar novamente
+                </Button>
+              </div>
+            ) : postsData?.posts.length === 0 ? (
+              <div className="text-center py-12">
+                <p className="text-muted-foreground text-lg mb-4">
+                  Nenhum artigo encontrado.
+                </p>
+                {(searchQuery || categoryFilter) && (
+                  <Button onClick={() => {
+                    clearSearch();
+                    handleCategoryClick(null);
+                  }} variant="outline">
+                    Ver todos os artigos
+                  </Button>
+                )}
+              </div>
+            ) : (
+              <>
+                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                  {postsData?.posts.map((post) => {
+                    const featuredImage = getPostFeaturedImage(post);
+                    const authorName = getPostAuthorName(post);
+                    const postCategories = getPostCategories(post);
+                    const excerpt = stripHtmlTags(post.excerpt.rendered);
+
+                    return (
+                      <article
+                        key={post.id}
+                        className="group bg-card rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300"
+                      >
+                        <Link to={`/blog/${post.slug}`}>
+                          <div className="relative h-48 overflow-hidden bg-muted">
+                            {featuredImage ? (
+                              <img
+                                src={featuredImage}
+                                alt={stripHtmlTags(post.title.rendered)}
+                                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                              />
+                            ) : (
+                              <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary/20 to-accent/20">
+                                <span className="text-4xl font-bold text-primary/30">PD</span>
+                              </div>
+                            )}
+                            {postCategories.length > 0 && (
+                              <Badge className="absolute top-4 left-4 bg-accent text-accent-foreground">
+                                {postCategories[0].name}
+                              </Badge>
+                            )}
+                          </div>
+                        </Link>
+
+                        <div className="p-6">
+                          <div className="flex items-center gap-4 text-sm text-muted-foreground mb-3">
+                            <span className="flex items-center gap-1">
+                              <User size={14} />
+                              {authorName}
+                            </span>
+                            <span className="flex items-center gap-1">
+                              <Calendar size={14} />
+                              {formatDate(post.date)}
+                            </span>
+                          </div>
+
+                          <Link to={`/blog/${post.slug}`}>
+                            <h2 
+                              className="text-xl font-bold text-foreground mb-3 group-hover:text-accent transition-colors duration-200 line-clamp-2"
+                              dangerouslySetInnerHTML={{ __html: post.title.rendered }}
+                            />
+                          </Link>
+
+                          <p className="text-muted-foreground text-sm mb-4 line-clamp-2">
+                            {excerpt}
+                          </p>
+
+                          <Link
+                            to={`/blog/${post.slug}`}
+                            className="inline-flex items-center gap-2 text-accent font-semibold text-sm group-hover:gap-3 transition-all duration-200"
+                          >
+                            Ler mais
+                            <ArrowRight size={16} />
+                          </Link>
+                        </div>
+                      </article>
+                    );
+                  })}
+                </div>
+
+                {/* Pagination */}
+                {postsData && postsData.totalPages > 1 && (
+                  <div className="flex items-center justify-center gap-2 mt-12">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handlePageChange(currentPage - 1)}
+                      disabled={currentPage <= 1}
+                    >
+                      Anterior
+                    </Button>
+                    
+                    {Array.from({ length: postsData.totalPages }, (_, i) => i + 1)
+                      .filter(page => {
+                        if (postsData.totalPages <= 5) return true;
+                        if (page === 1 || page === postsData.totalPages) return true;
+                        if (Math.abs(page - currentPage) <= 1) return true;
+                        return false;
+                      })
+                      .map((page, index, arr) => {
+                        const showEllipsis = index > 0 && page - arr[index - 1] > 1;
+                        return (
+                          <div key={page} className="flex items-center gap-2">
+                            {showEllipsis && <span className="px-2 text-muted-foreground">...</span>}
+                            <Button
+                              variant={currentPage === page ? "accent" : "outline"}
+                              size="sm"
+                              onClick={() => handlePageChange(page)}
+                            >
+                              {page}
+                            </Button>
+                          </div>
+                        );
+                      })}
+                    
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handlePageChange(currentPage + 1)}
+                      disabled={currentPage >= postsData.totalPages}
+                    >
+                      Próximo
+                    </Button>
+                  </div>
+                )}
+              </>
+            )}
           </div>
         </section>
       </main>
