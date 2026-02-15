@@ -3,9 +3,11 @@ import {
   fetchPosts,
   fetchPostBySlug,
   fetchCategories,
+  fetchProjects,
   FetchPostsParams,
   WPPost,
   WPCategory,
+  WPProject,
   PostsResponse,
 } from "@/services/wordpress-api";
 
@@ -31,5 +33,13 @@ export function useCategories() {
     queryKey: ["categories"],
     queryFn: fetchCategories,
     staleTime: 1000 * 60 * 30, // 30 minutes
+  });
+}
+
+export function useProjects() {
+  return useQuery<WPProject[]>({
+    queryKey: ["projects"],
+    queryFn: fetchProjects,
+    staleTime: 1000 * 60 * 10,
   });
 }
