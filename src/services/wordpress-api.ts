@@ -157,6 +157,53 @@ export async function fetchCategories(): Promise<WPCategory[]> {
   return response.json();
 }
 
+// Projects (Projecto CPT)
+export interface WPProject {
+  id: number;
+  date: string;
+  slug: string;
+  title: {
+    rendered: string;
+  };
+  featured_media: number;
+  acf: {
+    url?: string;
+  };
+  _embedded?: {
+    "wp:featuredmedia"?: Array<{
+      id: number;
+      source_url: string;
+      alt_text: string;
+      media_details?: {
+        sizes?: {
+          medium?: { source_url: string };
+          large?: { source_url: string };
+          full?: { source_url: string };
+        };
+      };
+    }>;
+    "wp:term"?: Array<
+      Array<{
+        id: number;
+        name: string;
+        slug: string;
+      }>
+    >;
+  };
+}
+
+export async function fetchProjects(): Promise<WPProject[]> {
+  const response = await fetch(
+    `${API_BASE_URL}/wp/v2/projecto?per_page=100&_embed=true`
+  );
+
+  if (!response.ok) {
+    throw new Error(`Erro ao buscar projectos: ${response.status}`);
+  }
+
+  return response.json();
+}
+
 // Utility functions
 export function stripHtmlTags(html: string): string {
   const div = document.createElement("div");
