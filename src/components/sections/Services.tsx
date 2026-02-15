@@ -1,41 +1,27 @@
 import { Link } from "react-router-dom";
-import { Globe, ShoppingBag, Mail, Users, Palette, ArrowRight, Check } from "lucide-react";
+import { Globe, Mail, Users, ArrowRight, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const services = [
   {
     icon: Globe,
     title: "Criação de Sites",
-    description: "Sites institucionais, blogs e landing pages personalizadas para sua marca brilhar online.",
-    features: ["Design Responsivo", "SEO Otimizado", "Suporte Incluído"],
+    description: "Sites institucionais, e-commerce e blogs com design responsivo e personalizado.",
+    features: ["A partir de 50.000 KZ/mês", "Até 10 páginas", "E-mails incluídos", "Suporte e Manutenção"],
     highlight: true,
-  },
-  {
-    icon: ShoppingBag,
-    title: "Templates WordPress",
-    description: "Modelos prontos e personalizáveis para você ter seu site no ar rapidamente.",
-    features: ["Fácil Customização", "Documentação Completa", "Atualizações Gratuitas"],
-    highlight: false,
   },
   {
     icon: Mail,
     title: "E-mails Corporativos",
     description: "E-mails profissionais com o domínio da sua empresa para transmitir credibilidade.",
-    features: ["Domínio Próprio", "Anti-Spam", "Suporte Técnico"],
+    features: ["A partir de 18.000 KZ", "Até 10 contas", "Suporte Técnico"],
     highlight: false,
   },
   {
     icon: Users,
     title: "Rede Freelancer",
     description: "Conectamos profissionais qualificados com empresas que precisam de serviços digitais.",
-    features: ["Profissionais Verificados", "Projetos Diversos", "Garantia de Qualidade"],
-    highlight: false,
-  },
-  {
-    icon: Palette,
-    title: "Identidade Visual",
-    description: "Logotipos, paletas de cores e materiais gráficos que representam sua marca.",
-    features: ["Logo Exclusivo", "Manual da Marca", "Arquivos Editáveis"],
+    features: ["Identidade Visual", "Marketing Digital", "Apps e Design UI/UX", "Fotografia e Análise de Dados"],
     highlight: false,
   },
 ];
@@ -60,7 +46,7 @@ const Services = () => {
         </div>
 
         {/* Services Grid */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid md:grid-cols-3 gap-8">
           {services.map((service, index) => (
             <div
               key={index}
