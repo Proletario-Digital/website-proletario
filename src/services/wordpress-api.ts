@@ -204,6 +204,28 @@ export async function fetchProjects(): Promise<WPProject[]> {
   return response.json();
 }
 
+export interface WPProjectCategory {
+  id: number;
+  count: number;
+  name: string;
+  slug: string;
+}
+
+export async function fetchProjectCategories(): Promise<WPProjectCategory[]> {
+  const response = await fetch(`${API_BASE_URL}/wp/v2/categoria-projecto?per_page=100`);
+
+  if (!response.ok) {
+    throw new Error(`Erro ao buscar categorias de projecto: ${response.status}`);
+  }
+
+  return response.json();
+}
+
+export function getProjectCategories(project: WPProject): Array<{ id: number; name: string; slug: string }> {
+  const terms = project._embedded?.["wp:term"]?.[0];
+  return terms || [];
+}
+
 // Utility functions
 export function stripHtmlTags(html: string): string {
   const div = document.createElement("div");
