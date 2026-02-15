@@ -1,13 +1,21 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { ExternalLink, ArrowRight, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useProjects } from "@/hooks/usePosts";
-import { getPostFeaturedImage } from "@/services/wordpress-api";
+import { Badge } from "@/components/ui/badge";
+import { useProjects, useProjectCategories } from "@/hooks/usePosts";
+import { getProjectCategories } from "@/services/wordpress-api";
 
 const Portfolio = () => {
   const { data: projects, isLoading } = useProjects();
+  const { data: categories } = useProjectCategories();
+  const [activeCategory, setActiveCategory] = useState<number | null>(null);
 
-  const displayProjects = projects?.slice(0, 6) || [];
+  const filteredProjects = activeCategory
+    ? projects?.filter((p) => p._embedded?.["wp:term"]?.[0]?.some((t) => t.id === activeCategory))
+    : projects;
+
+  const displayProjects = filteredProjects?.slice(0, 6) || [];
 
   return (
     <section id="portfolio" className="section-padding bg-background">
@@ -27,6 +35,31 @@ const Portfolio = () => {
           </p>
         </div>
 
+        {/* Category Filters */}
+        {categories && categories.length > 0 && (
+          <div className="flex flex-wrap justify-center gap-3 mb-12">
+            <Button
+              variant={activeCategory === null ? "default" : "outline"}
+              size="sm"
+              onClick={() => setActiveCategory(null)}
+              className="rounded-full"
+            >
+              Todos
+            </Button>
+            {categories.map((cat) => (
+              <Button
+                key={cat.id}
+                variant={activeCategory === cat.id ? "default" : "outline"}
+                size="sm"
+                onClick={() => setActiveCategory(cat.id)}
+                className="rounded-full"
+              >
+                {cat.name}
+              </Button>
+            ))}
+          </div>
+        )}
+
         {/* Projects Grid */}
         {isLoading ? (
           <div className="flex justify-center py-20">
@@ -38,19 +71,20 @@ const Portfolio = () => {
               const image =
                 project._embedded?.["wp:featuredmedia"]?.[0]?.source_url;
               const url = project.acf?.url;
+              const projectCats = getProjectCategories(project);
 
               return (
                 <div
                   key={project.id}
                   className="group relative bg-card rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300"
                 >
-                  {/* Image with scroll effect */}
+                  {/* Image with smooth scroll effect */}
                   <div className="relative h-56 overflow-hidden">
                     {image && (
                       <img
                         src={image}
                         alt={project.title.rendered}
-                        className="w-full h-[200%] object-cover object-top transition-all duration-[2s] ease-in-out group-hover:object-bottom"
+                        className="w-full h-[300%] object-cover object-top transition-[object-position] duration-[3s] ease-[cubic-bezier(0.25,0.1,0.25,1)] group-hover:object-bottom"
                       />
                     )}
                     <div className="absolute inset-0 bg-gradient-to-t from-foreground/80 via-foreground/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-center pb-4">
@@ -67,6 +101,15 @@ const Portfolio = () => {
 
                   {/* Content */}
                   <div className="p-6">
+                    {projectCats.length > 0 && (
+                      <div className="flex flex-wrap gap-2 mb-3">
+                        {projectCats.map((cat) => (
+                          <Badge key={cat.id} variant="secondary" className="text-xs">
+                            {cat.name}
+                          </Badge>
+                        ))}
+                      </div>
+                    )}
                     <h3 className="text-xl font-bold text-foreground group-hover:text-accent transition-colors duration-200">
                       {project.title.rendered}
                     </h3>

@@ -1,12 +1,21 @@
+import { useState } from "react";
 import { Helmet } from "react-helmet-async";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import { ExternalLink, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useProjects } from "@/hooks/usePosts";
+import { Badge } from "@/components/ui/badge";
+import { useProjects, useProjectCategories } from "@/hooks/usePosts";
+import { getProjectCategories } from "@/services/wordpress-api";
 
 const Portfolio = () => {
   const { data: projects, isLoading } = useProjects();
+  const { data: categories } = useProjectCategories();
+  const [activeCategory, setActiveCategory] = useState<number | null>(null);
+
+  const filteredProjects = activeCategory
+    ? projects?.filter((p) => p._embedded?.["wp:term"]?.[0]?.some((t) => t.id === activeCategory))
+    : projects;
 
   return (
     <>
@@ -40,16 +49,42 @@ const Portfolio = () => {
         {/* Projects Grid */}
         <section className="section-padding bg-background">
           <div className="container-custom">
+            {/* Category Filters */}
+            {categories && categories.length > 0 && (
+              <div className="flex flex-wrap justify-center gap-3 mb-12">
+                <Button
+                  variant={activeCategory === null ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => setActiveCategory(null)}
+                  className="rounded-full"
+                >
+                  Todos
+                </Button>
+                {categories.map((cat) => (
+                  <Button
+                    key={cat.id}
+                    variant={activeCategory === cat.id ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => setActiveCategory(cat.id)}
+                    className="rounded-full"
+                  >
+                    {cat.name}
+                  </Button>
+                ))}
+              </div>
+            )}
+
             {isLoading ? (
               <div className="flex justify-center py-20">
                 <Loader2 className="w-8 h-8 animate-spin text-accent" />
               </div>
             ) : (
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {projects?.map((project) => {
+                {filteredProjects?.map((project) => {
                   const image =
                     project._embedded?.["wp:featuredmedia"]?.[0]?.source_url;
                   const url = project.acf?.url;
+                  const projectCats = getProjectCategories(project);
 
                   return (
                     <div
@@ -61,7 +96,7 @@ const Portfolio = () => {
                           <img
                             src={image}
                             alt={project.title.rendered}
-                            className="w-full h-[200%] object-cover object-top transition-all duration-[2s] ease-in-out group-hover:object-bottom"
+                            className="w-full h-[300%] object-cover object-top transition-[object-position] duration-[3s] ease-[cubic-bezier(0.25,0.1,0.25,1)] group-hover:object-bottom"
                           />
                         )}
                         <div className="absolute inset-0 bg-gradient-to-t from-foreground/80 via-foreground/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-center pb-4">
@@ -76,6 +111,15 @@ const Portfolio = () => {
                         </div>
                       </div>
                       <div className="p-6">
+                        {projectCats.length > 0 && (
+                          <div className="flex flex-wrap gap-2 mb-3">
+                            {projectCats.map((cat) => (
+                              <Badge key={cat.id} variant="secondary" className="text-xs">
+                                {cat.name}
+                              </Badge>
+                            ))}
+                          </div>
+                        )}
                         <h3 className="text-xl font-bold text-foreground group-hover:text-accent transition-colors duration-200">
                           {project.title.rendered}
                         </h3>
@@ -86,9 +130,9 @@ const Portfolio = () => {
               </div>
             )}
 
-            {projects?.length === 0 && !isLoading && (
+            {filteredProjects?.length === 0 && !isLoading && (
               <p className="text-center text-muted-foreground py-20">
-                Nenhum projecto encontrado.
+                Nenhum projecto encontrado nesta categoria.
               </p>
             )}
           </div>
