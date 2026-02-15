@@ -38,6 +38,9 @@ const Contato = () => {
     setIsSubmitting(false);
   };
 
+  const whatsappNumber = import.meta.env.VITE_WA_PHONE_NUMBER || "244999999999";
+  const phoneNumber = import.meta.env.VITE_PHONE_NUMBER || "244999999999";
+
   return (
     <>
       <Helmet>
@@ -87,8 +90,8 @@ const Contato = () => {
                     {
                       icon: Phone,
                       title: "Telefone",
-                      content: "+244 999 999 999",
-                      href: "tel:+244999999999",
+                      content: `+${phoneNumber}`,
+                      href: `tel:+${phoneNumber}`,
                     },
                     {
                       icon: Mail,
@@ -131,7 +134,7 @@ const Contato = () => {
                   </p>
                   <Button variant="accent" asChild>
                     <a
-                      href="https://wa.me/244999999999"
+                      href={`https://wa.me/${whatsappNumber}`}
                       target="_blank"
                       rel="noopener noreferrer"
                     >

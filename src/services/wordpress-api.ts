@@ -1,4 +1,4 @@
-const API_BASE_URL = "https://proletariodigital.sharingancode.site/index.php/wp-json";
+const API_BASE_URL = import.meta.env.VITE_API_URL || "https://proletariodigital.sharingancode.site/index.php/wp-json";
 
 export interface WPPost {
   id: number;

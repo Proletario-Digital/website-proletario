@@ -4,6 +4,8 @@ import logoWhite from "@/assets/logo-white.png";
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
+  const whatsappNumber = import.meta.env.VITE_WA_PHONE_NUMBER || "244999999999";
+  const phoneNumber = import.meta.env.VITE_PHONE_NUMBER || "244999999999";
 
   return (
     <footer className="bg-primary text-primary-foreground">
@@ -45,7 +47,7 @@ const Footer = () => {
                 <Linkedin size={20} />
               </a>
               <a
-                href="https://wa.me/244999999999"
+                href={`https://wa.me/${whatsappNumber}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-10 h-10 rounded-full bg-primary-foreground/10 flex items-center justify-center hover:bg-accent transition-colors duration-200"
@@ -115,10 +117,10 @@ const Footer = () => {
               <li className="flex items-center gap-3">
                 <Phone size={20} className="text-accent flex-shrink-0" />
                 <a
-                  href="tel:+244999999999"
+                  href={`tel:+${phoneNumber}`}
                   className="text-primary-foreground/80 hover:text-accent transition-colors duration-200"
                 >
-                  +244 999 999 999
+                  +{phoneNumber}
                 </a>
               </li>
               <li className="flex items-center gap-3">

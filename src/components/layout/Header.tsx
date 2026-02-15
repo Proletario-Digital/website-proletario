@@ -3,6 +3,7 @@ import { Link, useLocation } from "react-router-dom";
 import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import logo from "@/assets/logo.png";
+import logoBranco from "@/assets/logo-white.png";
 
 const navLinks = [
   { name: "Início", path: "/" },
@@ -41,7 +42,7 @@ const Header = () => {
         <nav className="flex items-center justify-between">
           {/* Logo */}
           <Link to="/" className="flex items-center">
-            <img src={logo} alt="Proletário Digital" className="h-10 md:h-12" />
+            <img src={isScrolled ? logo : logoBranco} alt="Proletário Digital" className="h-10 md:h-12" />
           </Link>
 
           {/* Desktop Navigation */}
@@ -53,7 +54,9 @@ const Header = () => {
                 className={`px-4 py-2 rounded-lg font-medium transition-all duration-200 ${
                   isActive(link.path)
                     ? "text-accent bg-accent/10"
-                    : "text-foreground hover:text-accent hover:bg-accent/5"
+                    : isScrolled
+                      ? "text-foreground hover:text-accent hover:bg-accent/5"
+                      : "text-white hover:text-accent"
                 }`}
               >
                 {link.name}
@@ -81,7 +84,9 @@ const Header = () => {
         {/* Mobile Navigation */}
         <div
           className={`lg:hidden overflow-hidden transition-all duration-300 ${
-            isMobileMenuOpen ? "max-h-[500px] opacity-100 mt-4" : "max-h-0 opacity-0"
+            isMobileMenuOpen
+              ? "max-h-[500px] opacity-100 mt-4"
+              : "max-h-0 opacity-0"
           }`}
         >
           <div className="bg-card rounded-xl shadow-lg p-4 space-y-2">
@@ -93,7 +98,9 @@ const Header = () => {
                 className={`block px-4 py-3 rounded-lg font-medium transition-all duration-200 ${
                   isActive(link.path)
                     ? "text-accent bg-accent/10"
-                    : "text-foreground hover:text-accent hover:bg-accent/5"
+                    : isScrolled
+                      ? "text-foreground hover:text-accent hover:bg-accent/5"
+                      : "text-white hover:text-accent"
                 }`}
               >
                 {link.name}

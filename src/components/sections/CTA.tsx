@@ -3,6 +3,7 @@ import { ArrowRight, MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const CTA = () => {
+  const whatsappNumber = import.meta.env.VITE_WA_PHONE_NUMBER || "244999999999";
   return (
     <section className="section-padding bg-background">
       <div className="container-custom">
@@ -34,7 +35,7 @@ const CTA = () => {
                 asChild
               >
                 <a
-                  href="https://wa.me/244999999999"
+                  href={`https://wa.me/${whatsappNumber}`}
                   target="_blank"
                   rel="noopener noreferrer"
                 >
