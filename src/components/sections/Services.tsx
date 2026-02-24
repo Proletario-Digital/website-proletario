@@ -7,14 +7,14 @@ const services = [
     icon: Globe,
     title: "Criação de Sites",
     description: "Sites institucionais, e-commerce e blogs com design responsivo e personalizado.",
-    features: ["A partir de 50.000 KZ/mês", "Até 10 páginas", "E-mails incluídos", "Suporte e Manutenção"],
+    features: ["Até 10 páginas", "E-mails incluídos", "Suporte e Manutenção"],
     highlight: true,
   },
   {
     icon: Mail,
     title: "E-mails Corporativos",
     description: "E-mails profissionais com o domínio da sua empresa para transmitir credibilidade.",
-    features: ["A partir de 18.000 KZ", "Até 10 contas", "Suporte Técnico"],
+    features: ["Até 10 contas", "Suporte Técnico"],
     highlight: false,
   },
   {

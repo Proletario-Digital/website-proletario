@@ -131,13 +131,13 @@ const PricingCard = ({
     <div className="text-center mb-8">
       <h3 className="text-2xl font-bold text-foreground mb-2">{pkg.name}</h3>
       <p className="text-muted-foreground text-sm mb-4">{pkg.description}</p>
-      <div className="flex items-baseline justify-center gap-1">
+      {/* <div className="flex items-baseline justify-center gap-1">
         <span className="text-4xl font-bold text-foreground">{pkg.price}</span>
         <span className="text-muted-foreground">
           {currency}
           {pkg.period}
         </span>
-      </div>
+      </div> */}
     </div>
 
     <ul className="space-y-4 mb-8">
