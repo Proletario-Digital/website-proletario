@@ -1,7 +1,8 @@
 import { Link } from "react-router-dom";
-import { ArrowRight, MessageCircle, Phone } from "lucide-react";
+import { ArrowRight, Phone } from "lucide-react";
 import { motion } from "framer-motion";
 import ctaBg from "@/assets/cta-bg.jpg";
+import WhatsAppIcon from "@/components/ui/WhatsAppIcon";
 
 const CTA = () => {
   const whatsappNumber = import.meta.env.VITE_WA_PHONE_NUMBER || "244951461526";
@@ -91,7 +92,7 @@ const CTA = () => {
                 >
                   <span className="flex items-center gap-3">
                     <span className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center">
-                      <MessageCircle size={18} className="text-accent" />
+                      <WhatsAppIcon size={18} className="text-accent" />
                     </span>
                     Falar pelo WhatsApp
                   </span>

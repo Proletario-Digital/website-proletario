@@ -2,9 +2,10 @@ import { Link } from "react-router-dom";
 import { useState } from "react";
 import {
   Mail, Phone, MapPin, Facebook, Instagram, Linkedin,
-  MessageCircle, ArrowRight, Send
+  ArrowRight, Send
 } from "lucide-react";
 import logoWhite from "@/assets/logo-white.png";
+import WhatsAppIcon from "@/components/ui/WhatsAppIcon";
 
 const quickLinks = [
   { name: "Início", path: "/" },
@@ -91,7 +92,7 @@ const Footer = () => {
                 { icon: Facebook, href: "https://facebook.com", label: "Facebook" },
                 { icon: Instagram, href: "https://instagram.com", label: "Instagram" },
                 { icon: Linkedin, href: "https://linkedin.com", label: "LinkedIn" },
-                { icon: MessageCircle, href: `https://wa.me/${whatsappNumber}`, label: "WhatsApp" },
+                { icon: WhatsAppIcon, href: `https://wa.me/${whatsappNumber}`, label: "WhatsApp" },
               ].map(({ icon: Icon, href, label }) => (
                 <a
                   key={label}
