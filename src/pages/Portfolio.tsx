@@ -2,11 +2,10 @@ import { useState } from "react";
 import { Helmet } from "react-helmet-async";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
-import { ExternalLink, Loader2 } from "lucide-react";
+import { ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useProjects, useProjectCategories } from "@/hooks/usePosts";
-import { getProjectCategories } from "@/services/wordpress-api";
 
 const Portfolio = () => {
   const { data: projects, isLoading } = useProjects();
@@ -14,7 +13,7 @@ const Portfolio = () => {
   const [activeCategory, setActiveCategory] = useState<number | null>(null);
 
   const filteredProjects = activeCategory
-    ? projects?.filter((p) => p._embedded?.["wp:term"]?.[0]?.some((t) => t.id === activeCategory))
+    ? projects?.filter((p) => p.categories.some((t) => t.id === activeCategory))
     : projects;
 
   return (
@@ -30,12 +29,9 @@ const Portfolio = () => {
       <Header />
       <main>
         {/* Hero */}
-        <section className="pt-32 pb-20 bg-gradient-hero">
+        <section className="pt-40 pb-24 page-header-bg">
           <div className="container-custom">
             <div className="max-w-3xl mx-auto text-center">
-              <span className="inline-block px-4 py-2 rounded-full bg-primary-foreground/10 text-accent text-sm font-semibold mb-6">
-                Portfólio
-              </span>
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-primary-foreground mb-6">
                 Projetos que <span className="text-accent">Inspiram</span>
               </h1>
@@ -75,34 +71,56 @@ const Portfolio = () => {
             )}
 
             {isLoading ? (
-              <div className="flex justify-center py-20">
-                <Loader2 className="w-8 h-8 animate-spin text-accent" />
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {Array.from({ length: 6 }).map((_, i) => (
+                  <div key={i} className="bg-card rounded-2xl overflow-hidden shadow-sm">
+                    {/* Image skeleton */}
+                    <div className="relative h-56 overflow-hidden bg-muted">
+                      <div className="absolute inset-0 shimmer" />
+                    </div>
+                    {/* Content skeleton */}
+                    <div className="p-6 space-y-3">
+                      {/* Badge skeleton */}
+                      <div className="flex gap-2">
+                        <div className="relative h-5 w-16 rounded-full bg-muted overflow-hidden">
+                          <div className="absolute inset-0 shimmer" />
+                        </div>
+                        <div className="relative h-5 w-20 rounded-full bg-muted overflow-hidden">
+                          <div className="absolute inset-0 shimmer" />
+                        </div>
+                      </div>
+                      {/* Title skeleton */}
+                      <div className="relative h-6 w-3/4 rounded-lg bg-muted overflow-hidden">
+                        <div className="absolute inset-0 shimmer" />
+                      </div>
+                      <div className="relative h-4 w-1/2 rounded-lg bg-muted overflow-hidden">
+                        <div className="absolute inset-0 shimmer" />
+                      </div>
+                    </div>
+                  </div>
+                ))}
               </div>
             ) : (
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
                 {filteredProjects?.map((project) => {
-                  const image =
-                    project._embedded?.["wp:featuredmedia"]?.[0]?.source_url;
-                  const url = project.acf?.url;
-                  const projectCats = getProjectCategories(project);
-
                   return (
                     <div
                       key={project.id}
                       className="group relative bg-card rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300"
                     >
                       <div className="relative h-56 overflow-hidden">
-                        {image && (
+                        {project.featuredImage && (
                           <img
-                            src={image}
-                            alt={project.title.rendered}
-                            className="w-full h-[300%] object-cover object-top transition-[object-position] duration-[3s] ease-[cubic-bezier(0.25,0.1,0.25,1)] group-hover:object-bottom"
+                            src={project.featuredImage}
+                            alt={project.title}
+                            className="w-full h-[300%] object-cover object-top group-hover:object-bottom"
+                            style={{ transition: "object-position 3s cubic-bezier(0.25, 0.1, 0.25, 1)" }}
                           />
                         )}
                         <div className="absolute inset-0 bg-gradient-to-t from-foreground/80 via-foreground/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-center pb-4">
-                          {url && (
+                          {project.url && (
                             <Button variant="hero" size="sm" asChild>
-                              <a href={url} target="_blank" rel="noopener noreferrer">
+                              <a href={project.url} target="_blank" rel="noopener noreferrer">
                                 <ExternalLink size={16} />
                                 Ver Projeto
                               </a>
@@ -111,9 +129,9 @@ const Portfolio = () => {
                         </div>
                       </div>
                       <div className="p-6">
-                        {projectCats.length > 0 && (
+                        {project.categories.length > 0 && (
                           <div className="flex flex-wrap gap-2 mb-3">
-                            {projectCats.map((cat) => (
+                            {project.categories.map((cat) => (
                               <Badge key={cat.id} variant="secondary" className="text-xs">
                                 {cat.name}
                               </Badge>
@@ -121,7 +139,7 @@ const Portfolio = () => {
                           </div>
                         )}
                         <h3 className="text-xl font-bold text-foreground group-hover:text-accent transition-colors duration-200">
-                          {project.title.rendered}
+                          {project.title}
                         </h3>
                       </div>
                     </div>
@@ -144,3 +162,4 @@ const Portfolio = () => {
 };
 
 export default Portfolio;
+

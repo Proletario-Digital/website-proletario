@@ -3,116 +3,16 @@ import { Link } from "react-router-dom";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import { Button } from "@/components/ui/button";
-import { Check, ArrowRight, Globe, Mail, Users, MessageCircle } from "lucide-react";
+import { Check, ArrowRight, Globe, Mail, Users, MessageCircle, Loader2 } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-
-const sitesPackages = [
-  {
-    name: "Básico",
-    price: "50.000",
-    period: "/mês",
-    description: "Site Institucional Simples",
-    features: [
-      "Até 4 páginas",
-      "Design Responsivo",
-      "E-mails Corporativos (até 5 contas)",
-      "Suporte",
-      "Manutenção – 2x / Mês",
-    ],
-    highlight: false,
-  },
-  {
-    name: "Intermediário",
-    price: "75.000",
-    period: "/mês",
-    description: "Site Institucional Completo",
-    features: [
-      "Até 7 páginas",
-      "Design Responsivo e Personalizado",
-      "E-mails Corporativos (até 7 contas)",
-      "Blog Integrado",
-      "Suporte",
-      "Manutenção – 5x / Mês",
-    ],
-    highlight: true,
-  },
-  {
-    name: "Avançado",
-    price: "100.000",
-    period: "/mês",
-    description: "E-commerce ou Blog Avançado",
-    features: [
-      "E-commerce ou Blog Avançado",
-      "Design Responsivo e Personalizado",
-      "E-mails Corporativos (até 10 contas)",
-      "Suporte",
-      "Manutenção – 10x / Mês",
-    ],
-    highlight: false,
-  },
-];
-
-const emailPackages = [
-  {
-    name: "Básico",
-    price: "18.000",
-    period: "",
-    description: "Para pequenas equipas",
-    features: [
-      "E-mails Corporativos (até 5 contas)",
-      "Suporte",
-    ],
-    highlight: false,
-  },
-  {
-    name: "Intermediário",
-    price: "25.000",
-    period: "",
-    description: "Para equipas em crescimento",
-    features: [
-      "E-mails Corporativos (até 7 contas)",
-      "Suporte",
-    ],
-    highlight: true,
-  },
-  {
-    name: "Avançado",
-    price: "30.000",
-    period: "",
-    description: "Para grandes equipas",
-    features: [
-      "E-mails Corporativos (até 10 contas)",
-      "Suporte",
-    ],
-    highlight: false,
-  },
-];
-
-const freelancerServices = [
-  "Criação de Identidade Visual",
-  "Consultoria em Estratégias de Marketing Digital",
-  "Criação de Artes Gráficas",
-  "Desenvolvimento de Apps Mobile, Desktop e Web",
-  "Gestão de Tráfego Pago",
-  "Design Web – UI/UX",
-  "Fotografia Profissional e de Eventos",
-  "Análise de Dados",
-  "Power BI",
-];
-
-const freelancerMethodology = [
-  "Consulta individual",
-  "Criação do grupo no WhatsApp com o cliente e o Freelancer",
-  "Contrato de prestação de serviços",
-  "Realização",
-  "Pagamento",
-];
+import { useServices } from "@/hooks/useServices";
+import { ServicePackage } from "@/domain/entities/Service";
 
 const PricingCard = ({
   pkg,
   currency = "KZ",
 }: {
-  pkg: (typeof sitesPackages)[0];
+  pkg: ServicePackage;
   currency?: string;
 }) => (
   <div
@@ -131,13 +31,6 @@ const PricingCard = ({
     <div className="text-center mb-8">
       <h3 className="text-2xl font-bold text-foreground mb-2">{pkg.name}</h3>
       <p className="text-muted-foreground text-sm mb-4">{pkg.description}</p>
-      {/* <div className="flex items-baseline justify-center gap-1">
-        <span className="text-4xl font-bold text-foreground">{pkg.price}</span>
-        <span className="text-muted-foreground">
-          {currency}
-          {pkg.period}
-        </span>
-      </div> */}
     </div>
 
     <ul className="space-y-4 mb-8">
@@ -163,6 +56,27 @@ const PricingCard = ({
 );
 
 const Servicos = () => {
+  const { data, isLoading } = useServices();
+
+  if (isLoading) {
+    return (
+      <>
+        <Header />
+        <main className="flex justify-center items-center min-h-[60vh]">
+          <Loader2 className="w-8 h-8 animate-spin text-accent" />
+        </main>
+        <Footer />
+      </>
+    );
+  }
+
+  const {
+    sitesPackages = [],
+    emailPackages = [],
+    freelancerServices = [],
+    freelancerMethodology = [],
+  } = data || {};
+
   return (
     <>
       <Helmet>
@@ -176,12 +90,9 @@ const Servicos = () => {
       <Header />
       <main>
         {/* Hero */}
-        <section className="pt-32 pb-20 bg-gradient-hero">
+        <section className="pt-40 pb-24 page-header-bg">
           <div className="container-custom">
             <div className="max-w-3xl mx-auto text-center">
-              <span className="inline-block px-4 py-2 rounded-full bg-primary-foreground/10 text-accent text-sm font-semibold mb-6">
-                Nossos Serviços
-              </span>
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-primary-foreground mb-6">
                 Pacotes que Cabem no Seu <span className="text-accent">Orçamento</span>
               </h1>

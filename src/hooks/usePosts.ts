@@ -1,55 +1,49 @@
 import { useQuery } from "@tanstack/react-query";
-import {
-  fetchPosts,
-  fetchPostBySlug,
-  fetchCategories,
-  fetchProjects,
-  fetchProjectCategories,
-  FetchPostsParams,
-  WPPost,
-  WPCategory,
-  WPProject,
-  WPProjectCategory,
-  PostsResponse,
-} from "@/services/wordpress-api";
+import { WordPressPostRepository } from "@/infrastructure/repositories/WordPressPostRepository";
+import { WordPressProjectRepository } from "@/infrastructure/repositories/WordPressProjectRepository";
+import { FetchPostsParams } from "@/domain/repositories/PostRepository";
+
+const postRepository = new WordPressPostRepository();
+const projectRepository = new WordPressProjectRepository();
 
 export function usePosts(params: FetchPostsParams = {}) {
-  return useQuery<PostsResponse>({
+  return useQuery({
     queryKey: ["posts", params],
-    queryFn: () => fetchPosts(params),
+    queryFn: () => postRepository.fetchPosts(params),
     staleTime: 1000 * 60 * 5, // 5 minutes
   });
 }
 
 export function usePostBySlug(slug: string | undefined) {
-  return useQuery<WPPost | null>({
+  return useQuery({
     queryKey: ["post", slug],
-    queryFn: () => (slug ? fetchPostBySlug(slug) : Promise.resolve(null)),
+    queryFn: () => (slug ? postRepository.fetchPostBySlug(slug) : Promise.resolve(null)),
     enabled: !!slug,
     staleTime: 1000 * 60 * 5,
   });
 }
 
 export function useCategories() {
-  return useQuery<WPCategory[]>({
+  return useQuery({
     queryKey: ["categories"],
-    queryFn: fetchCategories,
+    queryFn: () => postRepository.fetchCategories(),
     staleTime: 1000 * 60 * 30, // 30 minutes
   });
 }
 
 export function useProjects() {
-  return useQuery<WPProject[]>({
+  return useQuery({
     queryKey: ["projects"],
-    queryFn: fetchProjects,
+    queryFn: () => projectRepository.fetchProjects(),
     staleTime: 1000 * 60 * 10,
   });
 }
 
 export function useProjectCategories() {
-  return useQuery<WPProjectCategory[]>({
+  return useQuery({
     queryKey: ["project-categories"],
-    queryFn: fetchProjectCategories,
+    queryFn: () => projectRepository.fetchProjectCategories(),
     staleTime: 1000 * 60 * 30,
   });
 }
+

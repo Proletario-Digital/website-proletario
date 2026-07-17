@@ -2,11 +2,13 @@ import { Helmet } from "react-helmet-async";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import Hero from "@/components/sections/Hero";
+import Partners from "@/components/sections/Partners";
 import About from "@/components/sections/About";
 import Services from "@/components/sections/Services";
+import ProcessSteps from "@/components/sections/ProcessSteps";
 import Portfolio from "@/components/sections/Portfolio";
+import StatsCounter from "@/components/sections/StatsCounter";
 import Testimonials from "@/components/sections/Testimonials";
-import Partners from "@/components/sections/Partners";
 import CTA from "@/components/sections/CTA";
 
 const Index = () => {
@@ -31,7 +33,9 @@ const Index = () => {
         <Partners />
         <About />
         <Services />
+        <ProcessSteps />
         <Portfolio />
+        <StatsCounter />
         <Testimonials />
         <CTA />
       </main>

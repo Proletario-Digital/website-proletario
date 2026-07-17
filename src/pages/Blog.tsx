@@ -9,13 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import { usePosts, useCategories } from "@/hooks/usePosts";
-import {
-  formatDate,
-  getPostFeaturedImage,
-  getPostAuthorName,
-  getPostCategories,
-  stripHtmlTags,
-} from "@/services/wordpress-api";
+import { formatDate, stripHtmlTags } from "@/services/wordpress-api";
 
 const Blog = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -85,12 +79,9 @@ const Blog = () => {
       <Header />
       <main>
         {/* Hero */}
-        <section className="pt-32 pb-20 bg-gradient-hero">
+        <section className="pt-40 pb-24 page-header-bg">
           <div className="container-custom">
             <div className="max-w-3xl mx-auto text-center">
-              <span className="inline-block px-4 py-2 rounded-full bg-primary-foreground/10 text-accent text-sm font-semibold mb-6">
-                Blog
-              </span>
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-primary-foreground mb-6">
                 Dicas e <span className="text-accent">Insights</span>
               </h1>
@@ -225,11 +216,6 @@ const Blog = () => {
               <>
                 <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
                   {postsData?.posts.map((post) => {
-                    const featuredImage = getPostFeaturedImage(post);
-                    const authorName = getPostAuthorName(post);
-                    const postCategories = getPostCategories(post);
-                    const excerpt = stripHtmlTags(post.excerpt.rendered);
-
                     return (
                       <article
                         key={post.id}
@@ -237,10 +223,10 @@ const Blog = () => {
                       >
                         <Link to={`/blog/${post.slug}`}>
                           <div className="relative h-48 overflow-hidden bg-muted">
-                            {featuredImage ? (
+                            {post.featuredImage ? (
                               <img
-                                src={featuredImage}
-                                alt={stripHtmlTags(post.title.rendered)}
+                                src={post.featuredImage}
+                                alt={stripHtmlTags(post.title)}
                                 className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                               />
                             ) : (
@@ -248,9 +234,9 @@ const Blog = () => {
                                 <span className="text-4xl font-bold text-primary/30">PD</span>
                               </div>
                             )}
-                            {postCategories.length > 0 && (
+                            {post.categories.length > 0 && (
                               <Badge className="absolute top-4 left-4 bg-accent text-accent-foreground">
-                                {postCategories[0].name}
+                                {post.categories[0].name}
                               </Badge>
                             )}
                           </div>
@@ -260,7 +246,7 @@ const Blog = () => {
                           <div className="flex items-center gap-4 text-sm text-muted-foreground mb-3">
                             <span className="flex items-center gap-1">
                               <User size={14} />
-                              {authorName}
+                              {post.authorName}
                             </span>
                             <span className="flex items-center gap-1">
                               <Calendar size={14} />
@@ -271,12 +257,12 @@ const Blog = () => {
                           <Link to={`/blog/${post.slug}`}>
                             <h2 
                               className="text-xl font-bold text-foreground mb-3 group-hover:text-accent transition-colors duration-200 line-clamp-2"
-                              dangerouslySetInnerHTML={{ __html: post.title.rendered }}
+                              dangerouslySetInnerHTML={{ __html: post.title }}
                             />
                           </Link>
 
                           <p className="text-muted-foreground text-sm mb-4 line-clamp-2">
-                            {excerpt}
+                            {post.excerpt}
                           </p>
 
                           <Link
@@ -348,3 +334,4 @@ const Blog = () => {
 };
 
 export default Blog;
+

@@ -5,67 +5,46 @@ import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import { Button } from "@/components/ui/button";
 import { Eye, ShoppingCart } from "lucide-react";
+import { useTemplates } from "@/hooks/useTemplates";
 
 const categories = ["Todos", "Negócios", "E-commerce", "Blog", "Portfólio", "Restaurante"];
 
-const templates = [
-  {
-    name: "Business Pro",
-    category: "Negócios",
-    price: "25.000",
-    image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=600&h=400&fit=crop",
-    description: "Template profissional para empresas e consultorias.",
-    popular: true,
-  },
-  {
-    name: "Shop Master",
-    category: "E-commerce",
-    price: "35.000",
-    image: "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=600&h=400&fit=crop",
-    description: "Loja virtual completa com WooCommerce integrado.",
-    popular: false,
-  },
-  {
-    name: "Blog Writer",
-    category: "Blog",
-    price: "15.000",
-    image: "https://images.unsplash.com/photo-1499750310107-5fef28a66643?w=600&h=400&fit=crop",
-    description: "Design elegante para blogs e sites de conteúdo.",
-    popular: false,
-  },
-  {
-    name: "Creative Portfolio",
-    category: "Portfólio",
-    price: "20.000",
-    image: "https://images.unsplash.com/photo-1545235617-9465d2a55698?w=600&h=400&fit=crop",
-    description: "Mostre seus trabalhos com estilo e profissionalismo.",
-    popular: true,
-  },
-  {
-    name: "Foodie Restaurant",
-    category: "Restaurante",
-    price: "30.000",
-    image: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=600&h=400&fit=crop",
-    description: "Template para restaurantes com menu e reservas.",
-    popular: false,
-  },
-  {
-    name: "Corporate Elite",
-    category: "Negócios",
-    price: "28.000",
-    image: "https://images.unsplash.com/photo-1497366216548-37526070297c?w=600&h=400&fit=crop",
-    description: "Ideal para grandes empresas e corporações.",
-    popular: false,
-  },
-];
+
+/* Shimmer skeleton for a template card */
+const TemplateSkeleton = () => (
+  <div className="bg-card rounded-2xl overflow-hidden shadow-sm border border-border/50">
+    <div className="relative h-56 bg-muted overflow-hidden">
+      <div className="absolute inset-0 shimmer" />
+    </div>
+    <div className="p-6 space-y-3">
+      <div className="relative h-3 w-16 rounded-full bg-muted overflow-hidden">
+        <div className="absolute inset-0 shimmer" />
+      </div>
+      <div className="relative h-6 w-3/4 rounded-lg bg-muted overflow-hidden">
+        <div className="absolute inset-0 shimmer" />
+      </div>
+      <div className="relative h-4 w-full rounded-lg bg-muted overflow-hidden">
+        <div className="absolute inset-0 shimmer" />
+      </div>
+      <div className="flex items-center justify-between pt-2">
+        <div className="relative h-7 w-24 rounded-lg bg-muted overflow-hidden">
+          <div className="absolute inset-0 shimmer" />
+        </div>
+        <div className="relative h-9 w-24 rounded-lg bg-muted overflow-hidden">
+          <div className="absolute inset-0 shimmer" />
+        </div>
+      </div>
+    </div>
+  </div>
+);
 
 const Templates = () => {
   const [activeCategory, setActiveCategory] = useState("Todos");
+  const { data: templates, isLoading } = useTemplates();
 
-  const filteredTemplates =
-    activeCategory === "Todos"
-      ? templates
-      : templates.filter((t) => t.category === activeCategory);
+  const filteredTemplates = activeCategory === "Todos"
+    ? templates
+    : templates?.filter((t) => t.category === activeCategory);
 
   return (
     <>
@@ -80,12 +59,9 @@ const Templates = () => {
       <Header />
       <main>
         {/* Hero */}
-        <section className="pt-32 pb-20 bg-gradient-hero">
+        <section className="pt-40 pb-24 page-header-bg">
           <div className="container-custom">
             <div className="max-w-3xl mx-auto text-center">
-              <span className="inline-block px-4 py-2 rounded-full bg-primary-foreground/10 text-accent text-sm font-semibold mb-6">
-                Marketplace
-              </span>
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-primary-foreground mb-6">
                 Templates <span className="text-accent">WordPress</span>
               </h1>
@@ -120,57 +96,65 @@ const Templates = () => {
         {/* Templates Grid */}
         <section className="section-padding bg-background">
           <div className="container-custom">
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {filteredTemplates.map((template, index) => (
-                <div
-                  key={index}
-                  className="group bg-card rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 border border-border/50"
-                >
-                  <div className="relative h-56 overflow-hidden">
-                    <img
-                      src={template.image}
-                      alt={template.name}
-                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                    />
-                    {template.popular && (
-                      <span className="absolute top-4 right-4 px-3 py-1 bg-accent text-accent-foreground text-xs font-bold rounded-full">
-                        Popular
+            {isLoading ? (
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {Array.from({ length: 6 }).map((_, i) => (
+                  <TemplateSkeleton key={i} />
+                ))}
+              </div>
+            ) : (
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {filteredTemplates?.map((template, index) => (
+                  <div
+                    key={index}
+                    className="group bg-card rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 border border-border/50"
+                  >
+                    <div className="relative h-56 overflow-hidden">
+                      <img
+                        src={template.image}
+                        alt={template.name}
+                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                      />
+                      {template.popular && (
+                        <span className="absolute top-4 right-4 px-3 py-1 bg-accent text-accent-foreground text-xs font-bold rounded-full">
+                          Popular
+                        </span>
+                      )}
+                      <div className="absolute inset-0 bg-foreground/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-4">
+                        <Button variant="hero" size="sm">
+                          <Eye size={16} />
+                          Demo
+                        </Button>
+                      </div>
+                    </div>
+
+                    <div className="p-6">
+                      <span className="text-xs font-semibold text-accent uppercase tracking-wider">
+                        {template.category}
                       </span>
-                    )}
-                    <div className="absolute inset-0 bg-foreground/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-4">
-                      <Button variant="hero" size="sm">
-                        <Eye size={16} />
-                        Demo
-                      </Button>
+                      <h3 className="text-xl font-bold text-foreground mt-2 mb-2">
+                        {template.name}
+                      </h3>
+                      <p className="text-muted-foreground text-sm mb-4">
+                        {template.description}
+                      </p>
+
+                      <div className="flex items-center justify-between">
+                        <span className="text-2xl font-bold text-foreground">
+                          {template.price} <span className="text-sm text-muted-foreground">KZ</span>
+                        </span>
+                        <Button variant="accent" size="sm" asChild>
+                          <Link to="/contato">
+                            <ShoppingCart size={16} />
+                            Comprar
+                          </Link>
+                        </Button>
+                      </div>
                     </div>
                   </div>
-
-                  <div className="p-6">
-                    <span className="text-xs font-semibold text-accent uppercase tracking-wider">
-                      {template.category}
-                    </span>
-                    <h3 className="text-xl font-bold text-foreground mt-2 mb-2">
-                      {template.name}
-                    </h3>
-                    <p className="text-muted-foreground text-sm mb-4">
-                      {template.description}
-                    </p>
-
-                    <div className="flex items-center justify-between">
-                      <span className="text-2xl font-bold text-foreground">
-                        {template.price} <span className="text-sm text-muted-foreground">KZ</span>
-                      </span>
-                      <Button variant="accent" size="sm" asChild>
-                        <Link to="/contato">
-                          <ShoppingCart size={16} />
-                          Comprar
-                        </Link>
-                      </Button>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            )}
 
             {/* Info */}
             <div className="mt-16 bg-accent/10 rounded-2xl p-8 text-center">

@@ -15,6 +15,7 @@ export default {
     extend: {
       fontFamily: {
         maven: ["Maven Pro", "sans-serif"],
+        outfit: ["Outfit", "sans-serif"],
       },
       colors: {
         border: "hsl(var(--border))",

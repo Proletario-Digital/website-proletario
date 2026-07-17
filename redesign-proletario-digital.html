@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Redesign Proletário Digital - Guia Completo</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Maven+Pro:wght@400;500;700;900&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Maven Pro', sans-serif; }
+    .code { font-family: monospace; background: #0f172a; color: #e0f2fe; }
+  </style>
+</head>
+<body class="bg-[#0B3956] text-[#EDEDEC]">
+
+  <div class="max-w-5xl mx-auto p-8">
+    <header class="text-center py-12 border-b border-[#73B3B8]/30">
+      <div class="flex justify-center items-center gap-4 mb-6">
+        <div class="w-16 h-16 bg-[#EDEDEC] rounded-2xl flex items-center justify-center text-5xl font-black text-[#0B3956]">P</div>
+        <div>
+          <h1 class="text-4xl font-black tracking-tighter">PROLETÁRIO</h1>
+          <p class="text-[#73B3B8] text-xl -mt-2">DIGITAL</p>
+        </div>
+      </div>
+      <h2 class="text-5xl font-black tracking-tighter">Guia Completo de Redesign</h2>
+      <p class="text-[#73B3B8] mt-4 text-lg">Versão mais original, autêntica e alinhada com a Identidade Visual</p>
+    </header>
+
+    <div class="prose prose-invert max-w-none mt-12">
+
+      <h2 class="text-3xl font-bold text-[#73B3B8] border-l-4 border-[#73B3B8] pl-4 py-2">1. Objetivo do Redesign</h2>
+      <p class="text-lg">Transformar o site de um visual genérico de IA para um design mais forte, profissional e com personalidade própria, mantendo a simplicidade e funcionalidade.</p>
+      <p><strong>Elementos centrais mantidos/reforçados:</strong> Cores oficiais (#0B3956, #73B3B8, #EDEDEC), Maven Pro, conceito do "Olho Atento".</p>
+
+      <h2 class="text-3xl font-bold text-[#73B3B8] border-l-4 border-[#73B3B8] pl-4 py-2 mt-12">2. tailwind.config.ts (Atualizado)</h2>
+      <pre class="code p-6 rounded-2xl overflow-auto text-sm"><code>
+extend: {
+  fontFamily: { maven: ["Maven Pro", "sans-serif"] },
+  colors: {
+    navy: "#0B3956",
+    teal: "#73B3B8",
+    cream: "#EDEDEC"
+  },
+  backgroundImage: {
+    "hero-pattern": "...",
+    "subtle-grid": "..."
+  }
+}
+      </code></pre>
+      <p class="text-sm mt-2">Adicionamos cores oficiais como classes rápidas (`bg-navy`, `text-teal`, etc.) e fundos sutis.</p>
+
+      <h2 class="text-3xl font-bold text-[#73B3B8] border-l-4 border-[#73B3B8] pl-4 py-2 mt-12">3. Header</h2>
+      <ul class="list-disc pl-6 space-y-2">
+        <li>Logo maior e mais impactante com o "Olho" dentro da letra P</li>
+        <li>Navegação mais limpa e profissional</li>
+        <li>Melhor experiência mobile</li>
+      </ul>
+
+      <h2 class="text-3xl font-bold text-[#73B3B8] border-l-4 border-[#73B3B8] pl-4 py-2 mt-12">4. Hero Section (Início)</h2>
+      <p>Mudança mais importante:</p>
+      <ul class="list-disc pl-6 space-y-2">
+        <li>Título forte e direto: “O SEU NEGÓCIO VISÍVEL. RELEVANTE. NO FUTURO.”</li>
+        <li>Uso marcante do conceito “Olho Atento”</li>
+        <li>Gradiente e padrão de fundo mais sofisticado</li>
+        <li>Chamada para ação mais clara</li>
+      </ul>
+
+      <h2 class="text-3xl font-bold text-[#73B3B8] border-l-4 border-[#73B3B8] pl-4 py-2 mt-12">5. Página de Serviços</h2>
+      <p>Design dos cards mais premium, com destaque visual para o pacote mais vendido.</p>
+
+      <h2 class="text-3xl font-bold text-[#73B3B8] border-l-4 border-[#73B3B8] pl-4 py-2 mt-12">6. Página Sobre Nós</h2>
+      <p>Mais emocional e centrada na história da marca + reforço dos valores.</p>
+
+      <h2 class="text-3xl font-bold text-[#73B3B8] border-l-4 border-[#73B3B8] pl-4 py-2 mt-12">7. Templates</h2>
+      <p>Visual mais premium, com filtros e cards mais atrativos.</p>
+
+      <h2 class="text-3xl font-bold text-[#73B3B8] border-l-4 border-[#73B3B8] pl-4 py-2 mt-12">8. Footer</h2>
+      <p>Mais robusto, com informações de contacto e reforço da marca.</p>
+
+      <div class="bg-[#73B3B8]/10 border border-[#73B3B8]/30 rounded-3xl p-8 mt-16">
+        <h3 class="text-2xl font-bold mb-4">Resumo das Melhorias Principais:</h3>
+        <ul class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+          <li class="flex items-start gap-3"><span class="text-[#73B3B8] mt-1">→</span> Design mais autêntico e menos genérico</li>
+          <li class="flex items-start gap-3"><span class="text-[#73B3B8] mt-1">→</span> Maior uso do símbolo do Olho Atento</li>
+          <li class="flex items-start gap-3"><span class="text-[#73B3B8] mt-1">→</span> Tipografia mais forte e hierarquia visual clara</li>
+          <li class="flex items-start gap-3"><span class="text-[#73B3B8] mt-1">→</span> Cores oficiais usadas de forma consistente</li>
+          <li class="flex items-start gap-3"><span class="text-[#73B3B8] mt-1">→</span> Sensação de marca angolana moderna e séria</li>
+        </ul>
+      </div>
+
+      <div class="text-center mt-20 text-[#73B3B8]/70 text-sm">
+        Documento gerado por Grok • Maio 2026<br>
+        Proletário Digital - Identidade Visual Respeitada
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>

@@ -15,20 +15,14 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import { usePostBySlug, usePosts } from "@/hooks/usePosts";
-import {
-  formatDate,
-  getPostFeaturedImage,
-  getPostAuthorName,
-  getPostCategories,
-  stripHtmlTags,
-} from "@/services/wordpress-api";
+import { formatDate, stripHtmlTags } from "@/services/wordpress-api";
 
 const BlogPost = () => {
   const { slug } = useParams<{ slug: string }>();
   const { data: post, isLoading, error } = usePostBySlug(slug);
   
   // Fetch related posts
-  const postCategories = post ? getPostCategories(post) : [];
+  const postCategories = post ? post.categories : [];
   const { data: relatedPostsData } = usePosts({
     perPage: 3,
     categories: postCategories.length > 0 ? [postCategories[0].id] : undefined,
@@ -40,7 +34,7 @@ const BlogPost = () => {
     if (navigator.share && post) {
       try {
         await navigator.share({
-          title: stripHtmlTags(post.title.rendered),
+          title: stripHtmlTags(post.title),
           url: window.location.href,
         });
       } catch (err) {
@@ -115,12 +109,9 @@ const BlogPost = () => {
     );
   }
 
-  const featuredImage = getPostFeaturedImage(post);
-  const authorName = getPostAuthorName(post);
-  const categories = getPostCategories(post);
-  const readingTime = getReadingTime(post.content.rendered);
-  const pageTitle = stripHtmlTags(post.title.rendered);
-  const pageDescription = stripHtmlTags(post.excerpt.rendered).slice(0, 160);
+  const readingTime = getReadingTime(post.content);
+  const pageTitle = stripHtmlTags(post.title);
+  const pageDescription = post.excerpt.slice(0, 160);
 
   return (
     <>
@@ -129,16 +120,16 @@ const BlogPost = () => {
         <meta name="description" content={pageDescription} />
         <meta property="og:title" content={pageTitle} />
         <meta property="og:description" content={pageDescription} />
-        {featuredImage && <meta property="og:image" content={featuredImage} />}
+        {post.featuredImage && <meta property="og:image" content={post.featuredImage} />}
         <meta property="og:type" content="article" />
         <meta property="article:published_time" content={post.date} />
-        <meta property="article:author" content={authorName} />
+        <meta property="article:author" content={post.authorName} />
       </Helmet>
 
       <Header />
       <main>
         {/* Hero */}
-        <section className="pt-32 pb-12 bg-gradient-hero">
+        <section className="pt-40 pb-16 page-header-bg">
           <div className="container-custom max-w-4xl">
             {/* Breadcrumb */}
             <Breadcrumb className="mb-6">
@@ -168,9 +159,9 @@ const BlogPost = () => {
             </Breadcrumb>
 
             {/* Categories */}
-            {categories.length > 0 && (
+            {post.categories.length > 0 && (
               <div className="flex flex-wrap gap-2 mb-4">
-                {categories.map((cat) => (
+                {post.categories.map((cat) => (
                   <Badge key={cat.id} className="bg-accent text-accent-foreground">
                     {cat.name}
                   </Badge>
@@ -181,14 +172,14 @@ const BlogPost = () => {
             {/* Title */}
             <h1 
               className="text-3xl md:text-4xl lg:text-5xl font-bold text-primary-foreground mb-6"
-              dangerouslySetInnerHTML={{ __html: post.title.rendered }}
+              dangerouslySetInnerHTML={{ __html: post.title }}
             />
 
             {/* Meta */}
             <div className="flex flex-wrap items-center gap-4 text-primary-foreground/80">
               <span className="flex items-center gap-2">
                 <User size={18} />
-                {authorName}
+                {post.authorName}
               </span>
               <span className="flex items-center gap-2">
                 <Calendar size={18} />
@@ -215,10 +206,10 @@ const BlogPost = () => {
         <section className="section-padding bg-background">
           <div className="container-custom max-w-4xl">
             {/* Featured Image */}
-            {featuredImage && (
+            {post.featuredImage && (
               <div className="relative -mt-16 mb-10 rounded-2xl overflow-hidden shadow-xl">
                 <img
-                  src={featuredImage}
+                  src={post.featuredImage}
                   alt={pageTitle}
                   className="w-full h-auto max-h-[500px] object-cover"
                 />
@@ -238,14 +229,14 @@ const BlogPost = () => {
                 prose-img:rounded-xl prose-img:shadow-lg
                 prose-code:bg-muted prose-code:text-accent prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded
                 prose-pre:bg-muted prose-pre:text-foreground"
-              dangerouslySetInnerHTML={{ __html: post.content.rendered }}
+              dangerouslySetInnerHTML={{ __html: post.content }}
             />
 
             {/* Tags */}
-            {categories.length > 0 && (
+            {post.categories.length > 0 && (
               <div className="flex flex-wrap items-center gap-3 mt-10 pt-8 border-t border-border">
                 <Tag size={18} className="text-muted-foreground" />
-                {categories.map((cat) => (
+                {post.categories.map((cat) => (
                   <Link
                     key={cat.id}
                     to={`/blog?category=${cat.id}`}
@@ -278,9 +269,6 @@ const BlogPost = () => {
               </h2>
               <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
                 {relatedPosts.map((relatedPost) => {
-                  const relatedImage = getPostFeaturedImage(relatedPost);
-                  const relatedCategories = getPostCategories(relatedPost);
-
                   return (
                     <Link
                       key={relatedPost.id}
@@ -288,10 +276,10 @@ const BlogPost = () => {
                       className="group bg-card rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300"
                     >
                       <div className="relative h-48 overflow-hidden bg-muted">
-                        {relatedImage ? (
+                        {relatedPost.featuredImage ? (
                           <img
-                            src={relatedImage}
-                            alt={stripHtmlTags(relatedPost.title.rendered)}
+                            src={relatedPost.featuredImage}
+                            alt={stripHtmlTags(relatedPost.title)}
                             className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                           />
                         ) : (
@@ -299,9 +287,9 @@ const BlogPost = () => {
                             <span className="text-4xl font-bold text-primary/30">PD</span>
                           </div>
                         )}
-                        {relatedCategories.length > 0 && (
+                        {relatedPost.categories.length > 0 && (
                           <Badge className="absolute top-4 left-4 bg-accent text-accent-foreground">
-                            {relatedCategories[0].name}
+                            {relatedPost.categories[0].name}
                           </Badge>
                         )}
                       </div>
@@ -311,7 +299,7 @@ const BlogPost = () => {
                         </p>
                         <h3 
                           className="text-lg font-bold text-foreground group-hover:text-accent transition-colors line-clamp-2"
-                          dangerouslySetInnerHTML={{ __html: relatedPost.title.rendered }}
+                          dangerouslySetInnerHTML={{ __html: relatedPost.title }}
                         />
                       </div>
                     </Link>
@@ -328,3 +316,4 @@ const BlogPost = () => {
 };
 
 export default BlogPost;
+

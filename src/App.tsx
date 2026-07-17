@@ -14,6 +14,8 @@ import Templates from "./pages/Templates";
 import Contato from "./pages/Contato";
 import NotFound from "./pages/NotFound";
 import { Analytics } from '@vercel/analytics/react';
+import SmoothScroller from "@/components/layout/SmoothScroller";
+import FloatingButtons from "@/components/ui/FloatingButtons";
 
 const queryClient = new QueryClient();
 
@@ -21,9 +23,11 @@ const App = () => (
   <HelmetProvider>
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
+        <SmoothScroller />
         <Toaster />
         <Sonner />
         <BrowserRouter>
+          <FloatingButtons />
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/sobre" element={<Sobre />} />
