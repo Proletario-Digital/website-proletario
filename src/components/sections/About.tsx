@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import FadeIn from "@/components/animations/FadeIn";
 import { useRef, useEffect, useState } from "react";
 import aboutImg from "@/assets/about-team.jpg";
+import { useProjects } from "@/hooks/usePosts";
 
 const skills = [
   { label: "Web Design & Desenvolvimento", value: 95 },
@@ -32,6 +33,9 @@ const ProgressBar = ({ label, value, animate }: { label: string; value: number; 
 );
 
 const About = () => {
+  const { data: projects } = useProjects();
+  const projectsCount = projects?.length || 5;
+
   const skillsRef = useRef<HTMLDivElement>(null);
   const [animateSkills, setAnimateSkills] = useState(false);
 
@@ -77,7 +81,7 @@ const About = () => {
 
               {/* Floating satisfied clients badge */}
               <div className="absolute -top-5 -left-5 bg-white rounded-2xl p-5 shadow-[var(--shadow-md)] border border-border/40">
-                <p className="text-4xl font-black text-[hsl(203_77%_12%)] leading-none">30+</p>
+                <p className="text-4xl font-black text-[hsl(203_77%_12%)] leading-none">{projectsCount}+</p>
                 <p className="text-muted-foreground text-xs font-semibold uppercase tracking-wider mt-1">
                   Clientes<br/>Satisfeitos
                 </p>

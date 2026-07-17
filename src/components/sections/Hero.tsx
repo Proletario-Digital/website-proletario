@@ -31,15 +31,15 @@ const imageVariants = {
   },
 };
 
-const badges = [
-  "50+ Projetos Entregues",
-  "Orçamento Gratuito",
-  "Suporte Dedicado",
-];
-
 const Hero = () => {
   const { data: projects } = useProjects();
   const projectsCount = projects?.length || 5;
+
+  const badges = [
+    `${projectsCount}+ Projetos Entregues`,
+    "Orçamento Gratuito",
+    "Suporte Dedicado",
+  ];
 
   return (
     <section className="relative min-h-screen flex items-center overflow-hidden bg-[hsl(203_77%_12%)]">
